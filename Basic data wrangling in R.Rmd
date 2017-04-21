@@ -1,0 +1,121 @@
+---
+title: "R基礎資料整理"
+output: html_notebook
+---
+# 環境設定
+```{r}
+rm(list=ls())
+library(dplyr)
+```
+# 基本觀察
+```{r}
+library(nycflights13)
+dim(flights)
+flights
+```
+
+# Subset observations
+```{r}
+filter(flights, month == 1, day == 1)
+```
+
+使用pipe表示%>%可以不用寫下function的第一個元素
+```{r}
+flights %>% filter(month==1,day==1) 
+```
+
+## 練習：查詢資料維度並 選出97學年的成績
+```{r}
+load("transcript sample.Rdata")
+
+```
+
+# Subset variables
+```{r}
+# Select columns by name
+select(flights, year, month, day)
+# Select all columns between year and day (inclusive)
+select(flights, year:day)
+# Select all columns except those from year to day (inclusive)
+select(flights, -(year:day))
+```
+
+## 練習：只留下 科目名稱 及 授課老師 變數，並使用 %>% 寫法
+```{r}
+
+```
+
+# Summarise data
+```{r}
+summarise(flights,
+  mean.delay = mean(dep_delay, na.rm = TRUE),
+  sd.delay = sd(dep_delay, na.rm=TRUE)
+)
+```
+
+
+```{r}
+flights1.1<-filter(flights, month == 1, day == 1 )
+summarise(flights1.1,
+  mean.delay = mean(dep_delay, na.rm = TRUE),
+  sd.delay = sd(dep_delay, na.rm=TRUE)
+          )
+```
+
+```{r}
+flights %>% filter(month==1, day==1) %>%
+  summarise(
+    mean.delay = mean(dep_delay, na.rm = TRUE),
+    sd.delay = sd(dep_delay, na.rm=TRUE))
+```
+
+## 練習：計算 97學年 第1學期 陳孝琪 老師 經濟學原理 的全班成績 平均及標準差。
+```{r}
+
+```
+
+# Make new variables
+```{r}
+flights %>% mutate(
+  gain = arr_delay - dep_delay,
+  speed = distance / air_time * 60) -> flights
+flights
+```
+```{r}
+flights %>% transmute(
+  gain = arr_delay - dep_delay,
+  speed = distance / air_time * 60) -> flights2
+flights2
+```
+
+## 練習：產生 被當 的邏輯變數，利用 被當=(成績<60)
+```{r}
+
+```
+
+## 練習：請問97學年經濟學原理有多少比例的學生被當？
+```{r}
+
+```
+
+# Group data
+```{r}
+by_tailnum <- group_by(flights, tailnum)
+delay <- summarise(by_tailnum,
+  count = n(),
+  dist = mean(distance, na.rm = TRUE),
+  delay = mean(arr_delay, na.rm = TRUE))
+delay
+delay <- filter(delay, count > 20, dist < 2000)
+delay
+```
+
+## 練習：請問97學年每位經濟學原理老師各別當掉多少比例的學生？
+```{r}
+
+```
+
+## 練習：請問各學年每位經濟學原理老師各別當掉多少比例的學生？這比例有個趨勢嗎？
+```{r}
+
+```
