@@ -12,6 +12,8 @@ library(dplyr)
 library(nycflights13)
 dim(flights)
 flights
+
+UA%>% group_by(carrier=="UA")  %>% summarise(mean(dep_delay))
 ```
 
 # Subset observations
@@ -27,6 +29,7 @@ flights %>% filter(month==1,day==1)
 ## 練習：查詢資料維度並 選出97學年的成績
 ```{r}
 load("transcript sample.Rdata")
+filter(transcript.data.new2,學年==97)
 
 ```
 
@@ -71,6 +74,7 @@ flights %>% filter(month==1, day==1) %>%
 
 ## 練習：計算 97學年 第1學期 陳孝琪 老師 經濟學原理 的全班成績 平均及標準差。
 ```{r}
+load("transcript sample.Rdata")
 
 ```
 
