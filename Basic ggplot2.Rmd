@@ -1,0 +1,149 @@
+---
+title: "R繪圖入門"
+output: html_notebook
+---
+# 環境設定
+```{r}
+rm(list = ls())
+library(dplyr)
+library(ggplot2)
+```
+
+
+# 1.Basics
+ggplot(aes(x=,y=,color=)) 用來訂義基本圖面維度
+
+# 2.One Variable
+```{r}
+diamonds
+diamonds %>% ggplot(aes(x=carat)) 
+```
+
+```{r}
+diamonds %>% ggplot(aes(x=carat))+
+  geom_histogram()
+```
+
+```{r}
+levels(diamonds$color)
+```
+```{r}
+diamonds %>% ggplot(aes(x=carat))+
+  geom_histogram(alpha=0.5)+
+  geom_histogram(data=diamonds %>% filter(color=="E"),alpha=0.5,fill="red")+
+  geom_histogram(data=diamonds %>% filter(color=="F"),alpha=0.3,fill="blue")
+```
+
+```{r}
+diamonds %>% ggplot(aes(x=carat))+
+  geom_histogram(alpha=0.5)+
+  geom_histogram(data= (diamonds %>% filter(color %in% c("E","F"))),alpha=0.5,aes(fill=color))
+```
+
+## 練習：使用histogram來繪製97學年度第1學期經濟學原理各班的成績分佈
+Mac使用者必需再 
+  +theme(text=element_text(family="STKaiti", size=12))
+其中STKaiti為字體書（Font Book）包含的字體。
+[參見：https://blog.gtwang.org/r/how-to-use-your-favorite-fonts-in-r-charts/]
+```{r}
+load("transcript sample.Rdata")
+
+```
+
+# 3. Two variables: Continuous X, continuous Y
+```{r}
+mtcars
+mtcars %>% ggplot(aes(x=wt, y=mpg))+
+  geom_point() -> p1
+p1
+
+```
+
+```{r}
+mark.data <- data.frame(
+  x=c(2.3,5.5),
+  y=c(32.5,15),
+  name=c("A","B")
+)
+p1 + geom_text(data=mark.data,aes(x=x,y=y,label=name)) -> p2
+p2
+```
+
+```{r}
+p2 + geom_smooth(method="lm",se=FALSE)
+```
+
+## 練習：97學年度經原學生第1學期成績與第2學期成績的關連性有多高？
+## (1) 選出97學年經濟學原理的資料，並只留下學期，授課老師，成績及ID
+```{r}
+
+```
+## (2) 將上下學期成績分成兩欄變數，使用tidyr::spread()
+```{r}
+
+```
+## (3) 畫出上下學期的離散圖（使用geom_point）並計算各別授課老師的學生上下學期成績correlation
+```{r}
+
+```
+
+# 4. Two variables: Discrete X, Continuous Y
+```{r}
+library(gcookbook)
+cabbage_exp<-tbl_df(cabbage_exp)
+cabbage_exp
+```
+
+基本繪圖：定義圖面維度
+x軸變數一律被當成類別變數, fill為以「填色」分類的維度，和color不同。color是指以「描線顏色」分類的維度。
+```{r, echo=TRUE, fig.show='hide', message=FALSE, warning=FALSE}
+cabbage_exp %>% ggplot(aes(x = Date, y = Weight, fill = Cultivar)) -> p 
+```
+
+直條圖：直式堆疊（內定）
+```{r}
+p + geom_bar(stat = "identity")
+```
+
+直條圖：橫向排列
+```{r}
+p+geom_bar(stat = "identity", position = "dodge") -> p
+p
+```
+
+## 練習：三位經原老師班上成績的逐年趨勢
+(1) 記算各別老師各學年（上下學期不用分）班上平均成績
+```{r}
+
+```
+(2) x軸為學年，y軸為平均成績，畫出不同老師的平均成績趨勢直條圖
+```{r}
+
+```
+
+#4. Labels
+```{r}
+mtcars %>% ggplot(aes(x=wt, y=mpg))+
+  geom_point() +
+  labs(title="Weight and Fuel Efficiency",
+       x="Weight",
+       y="Miles per gallon")-> f4
+f4
+```
+
+## 練習：請將上一題圖形加上主題"不同經原授課教師歷年全班平均成績"，並把 授課老師 的圖標改名為 "教師名稱" 
+```{r}
+
+```
+
+# 5. Save
+eps/ps, tex (pictex), pdf, jpeg, tiff, png, bmp, svg and wmf 
+```{r}
+ggsave("mpg vs weight.eps",f4)
+```
+
+## 練習：把最後一張圖存下來
+```{r}
+
+```
+
